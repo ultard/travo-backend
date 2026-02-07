@@ -38,8 +38,8 @@ class SecurityConfig {
                 authenticationEntryPoint = HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
             }
             authorizeHttpRequests {
-                authorize("/api/auth/register", permitAll)
-                authorize("/api/auth/login", permitAll)
+                authorize("/auth/register", permitAll)
+                authorize("/auth/login", permitAll)
                 authorize("/scalar", permitAll)
                 authorize("/scalar/**", permitAll)
                 authorize("/v3/api-docs", permitAll)
