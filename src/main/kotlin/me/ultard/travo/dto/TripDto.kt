@@ -1,5 +1,6 @@
 package me.ultard.travo.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.util.UUID
@@ -22,7 +23,9 @@ data class TripCreateResponse(
 data class TripCreateRequest(
     val name: String,
     val description: String? = null,
+    @JsonFormat(pattern = "yy.MM.dd")
     val startDate: LocalDate? = null,
+    @JsonFormat(pattern = "yy.MM.dd")
     val endDate: LocalDate? = null,
     val currencyCode: String = "RUB",
 )
@@ -30,7 +33,9 @@ data class TripCreateRequest(
 data class TripUpdateRequest(
     val name: String? = null,
     val description: String? = null,
+    @JsonFormat(pattern = "yy.MM.dd")
     val startDate: LocalDate? = null,
+    @JsonFormat(pattern = "yy.MM.dd")
     val endDate: LocalDate? = null,
     val currencyCode: String? = null,
 )
