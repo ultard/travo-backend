@@ -1,0 +1,160 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-01-users
+      author: travo
+      comment: Users table for auth and profile
+      changes:
+        - createTable:
+            tableName: app_user
+            columns:
+              - column: { name: id, type: uuid }
+              - column: { name: email, type: varchar(255) }
+              - column: { name: display_name, type: varchar(255) }
+              - column: { name: password_hash, type: varchar(255) }
+              - column: { name: created_at, type: timestamptz }
+        - addPrimaryKey:
+            tableName: app_user
+            columnNames: id
+        - addUniqueConstraint:
+            tableName: app_user
+            columnNames: email
+            constraintName: uk_user_email
+        - createIndex:
+            tableName: app_user
+            indexName: idx_user_email
+            columns:
+              - column: { name: email }
+
+  - changeSet:
+      id: 001-02-trips
+      author: travo
+      comment: Trips table
+      changes:
+        - createTable:
+            tableName: trip
+            columns:
+              - column: { name: id, type: uuid }
+              - column: { name: name, type: varchar(255) }
+              - column: { name: description, type: text }
+              - column: { name: start_date, type: date }
+              - column: { name: end_date, type: date }
+              - column: { name: currency_code, type: varchar(3) }
+              - column: { name: created_by_id, type: uuid }
+              - column: { name: created_at, type: timestamptz }
+        - addPrimaryKey:
+            tableName: trip
+            columnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: trip
+            baseColumnNames: created_by_id
+            constraintName: fk_trip_created_by
+            referencedTableName: app_user
+            referencedColumnNames: id
+
+  - changeSet:
+      id: 001-03-trip-participants
+      author: travo
+      comment: Trip participants (many-to-many with role)
+      changes:
+        - createTable:
+            tableName: trip_participant
+            columns:
+              - column: { name: trip_id, type: uuid }
+              - column: { name: user_id, type: uuid }
+              - column: { name: role, type: varchar(32) }
+              - column: { name: joined_at, type: timestamptz }
+        - addPrimaryKey:
+            tableName: trip_participant
+            columnNames: trip_id, user_id
+            constraintName: pk_trip_participant
+        - addForeignKeyConstraint:
+            baseTableName: trip_participant
+            baseColumnNames: trip_id
+            constraintName: fk_participant_trip
+            referencedTableName: trip
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: trip_participant
+            baseColumnNames: user_id
+            constraintName: fk_participant_user
+            referencedTableName: app_user
+            referencedColumnNames: id
+        - addUniqueConstraint:
+            tableName: trip_participant
+            columnNames: trip_id, user_id
+            constraintName: uk_trip_participant
+
+  - changeSet:
+      id: 001-04-expenses
+      author: travo
+      comment: Expenses per trip
+      changes:
+        - createTable:
+            tableName: expense
+            columns:
+              - column: { name: id, type: uuid }
+              - column: { name: trip_id, type: uuid }
+              - column: { name: paid_by_id, type: uuid }
+              - column: { name: amount_cents, type: bigint }
+              - column: { name: currency_code, type: varchar(3) }
+              - column: { name: description, type: varchar(500) }
+              - column: { name: category, type: varchar(64) }
+              - column: { name: created_at, type: timestamptz }
+        - addPrimaryKey:
+            tableName: expense
+            columnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: expense
+            baseColumnNames: trip_id
+            constraintName: fk_expense_trip
+            referencedTableName: trip
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: expense
+            baseColumnNames: paid_by_id
+            constraintName: fk_expense_paid_by
+            referencedTableName: app_user
+            referencedColumnNames: id
+        - createIndex:
+            tableName: expense
+            indexName: idx_expense_trip
+            columns:
+              - column: { name: trip_id }
+
+  - changeSet:
+      id: 001-05-expense-splits
+      author: travo
+      comment: How expense is split between participants
+      changes:
+        - createTable:
+            tableName: expense_split
+            columns:
+              - column: { name: id, type: uuid }
+              - column: { name: expense_id, type: uuid }
+              - column: { name: user_id, type: uuid }
+              - column: { name: amount_cents, type: bigint }
+        - addPrimaryKey:
+            tableName: expense_split
+            columnNames: id
+            constraintName: pk_expense_split
+        - addForeignKeyConstraint:
+            baseTableName: expense_split
+            baseColumnNames: expense_id
+            constraintName: fk_split_expense
+            referencedTableName: expense
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: expense_split
+            baseColumnNames: user_id
+            constraintName: fk_split_user
+            referencedTableName: app_user
+            referencedColumnNames: id
+        - addUniqueConstraint:
+            tableName: expense_split
+            columnNames: expense_id, user_id
+            constraintName: uk_expense_split_user
+        - createIndex:
+            tableName: expense_split
+            indexName: idx_expense_split_expense
+            columns:
+              - column: { name: expense_id }
