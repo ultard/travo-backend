@@ -158,3 +158,59 @@ databaseChangeLog:
             indexName: idx_expense_split_expense
             columns:
               - column: { name: expense_id }
+
+  - changeSet:
+      id: 001-06-trip-routes
+      author: travo
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_trip_route
+                  name: id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                  name: trip_id
+                  type: UUID
+              - column:
+                  constraints:
+                    nullable: false
+                  name: position
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: address
+                  type: VARCHAR(500)
+              - column:
+                  name: latitude
+                  type: DECIMAL(10, 7)
+              - column:
+                  name: longitude
+                  type: DECIMAL(10, 7)
+              - column:
+                  name: planned_start_date
+                  type: DATE
+              - column:
+                  name: planned_end_date
+                  type: DATE
+            tableName: trip_route
+
+        - addForeignKeyConstraint:
+            baseColumnNames: trip_id
+            baseTableName: trip_route
+            constraintName: fk_trip_route
+            referencedTableName: trip
+            referencedColumnNames: id

@@ -46,4 +46,7 @@ class Trip(
 
     @OneToMany(mappedBy = "trip", orphanRemoval = true)
     val expenses: MutableList<Expense> = mutableListOf(),
+
+    @OneToMany(mappedBy = "trip", orphanRemoval = true)
+    val routePoints: MutableList<TripRoute> = mutableListOf(),
 )
