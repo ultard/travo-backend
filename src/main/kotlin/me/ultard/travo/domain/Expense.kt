@@ -17,13 +17,13 @@ import java.util.UUID
 class Expense(
     @Id
     @Column(updatable = false, nullable = false)
-    val id: UUID = UUID.randomUUID(),
+    var id: UUID = UUID.randomUUID(),
 
     @Column(name = "trip_id", nullable = false, updatable = false)
-    val tripId: UUID,
+    var tripId: UUID,
 
     @Column(name = "paid_by_id", nullable = false, updatable = false)
-    val paidById: UUID,
+    var paidById: UUID,
 
     @Column(name = "amount_cents", nullable = false)
     var amountCents: Long,
@@ -34,20 +34,24 @@ class Expense(
     @Column(length = 500)
     var description: String? = null,
 
-    @Column(length = 64)
-    var category: String? = null,
+    @Column(name = "category_id")
+    var categoryId: UUID,
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    val createdAt: Instant = Instant.now(),
+    var createdAt: Instant = Instant.now(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trip_id", insertable = false, updatable = false)
-    val trip: Trip? = null,
+    var trip: Trip? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "paid_by_id", insertable = false, updatable = false)
-    val paidBy: User? = null,
+    var paidBy: User? = null,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", insertable = false, updatable = false)
+    var category: ExpenseCategory? = null,
 
     @OneToMany(mappedBy = "expense", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val splits: MutableList<ExpenseSplit> = mutableListOf(),
+    var splits: MutableList<ExpenseSplit> = mutableListOf(),
 )

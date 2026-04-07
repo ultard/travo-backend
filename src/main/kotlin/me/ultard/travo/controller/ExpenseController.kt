@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import me.ultard.travo.dto.ExpenseCreateRequest
 import me.ultard.travo.dto.ExpenseCreateResponse
+import me.ultard.travo.dto.ExpensePageResponse
 import me.ultard.travo.dto.ExpenseResponse
 import me.ultard.travo.dto.ExpenseUpdateRequest
 import me.ultard.travo.security.requireCurrentUserId
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.Instant
 import java.util.UUID
 
 @RestController
@@ -29,12 +32,23 @@ class ExpenseController(
     private val expenseService: ExpenseService,
 ) {
 
-    @Operation(summary = "Список трат", description = "Все траты поездки, отсортированные по дате.")
-    @ApiResponse(responseCode = "200", description = "Список трат")
+    @Operation(
+        summary = "Список трат",
+        description = "Траты поездки с фильтрами и cursor-пагинацией",
+    )
+    @ApiResponse(responseCode = "200", description = "Страница трат")
     @GetMapping
-    fun list(@PathVariable tripId: UUID): List<ExpenseResponse> {
+    fun list(
+        @PathVariable tripId: UUID,
+        @RequestParam(required = false) from: Instant?,
+        @RequestParam(required = false) to: Instant?,
+        @RequestParam(required = false, name = "category") categoryId: UUID?,
+        @RequestParam(required = false, name = "payer") payer: UUID?,
+        @RequestParam(required = false, defaultValue = "20") limit: Int,
+        @RequestParam(required = false) cursor: String?,
+    ): ExpensePageResponse {
         val userId = requireCurrentUserId()
-        return expenseService.listByTrip(tripId, userId)
+        return expenseService.listByTripPaged(tripId, userId, from, to, categoryId, payer, limit, cursor)
     }
 
     @Operation(

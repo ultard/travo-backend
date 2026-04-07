@@ -1,9 +1,9 @@
 plugins {
     kotlin("jvm") version "2.3.10"
-    kotlin("plugin.spring") version "2.2.21"
+    kotlin("plugin.spring") version "2.3.10"
     id("org.springframework.boot") version "4.0.2"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("plugin.jpa") version "2.2.21"
+    kotlin("plugin.jpa") version "2.3.10"
 }
 
 group = "me.ultard"
@@ -34,7 +34,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-scalar:2.8.15")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-scalar:3.0.2")
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
@@ -48,6 +48,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation(kotlin("stdlib"))
 }
 
 kotlin {

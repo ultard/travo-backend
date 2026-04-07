@@ -14,22 +14,22 @@ import java.util.UUID
 class ExpenseSplit(
     @Id
     @Column(updatable = false, nullable = false)
-    val id: UUID = UUID.randomUUID(),
+    var id: UUID = UUID.randomUUID(),
 
     @Column(name = "expense_id", nullable = false, updatable = false)
-    val expenseId: UUID,
+    var expenseId: UUID,
 
     @Column(name = "user_id", nullable = false, updatable = false)
-    val userId: UUID,
+    var userId: UUID,
 
     @Column(name = "amount_cents", nullable = false)
     var amountCents: Long,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "expense_id", insertable = false, updatable = false)
-    val expense: Expense? = null,
+    var expense: Expense? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    val user: User? = null,
+    var user: User? = null,
 )

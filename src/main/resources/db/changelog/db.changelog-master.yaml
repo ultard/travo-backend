@@ -1,6 +1,8 @@
 databaseChangeLog:
   - include:
       file: db/changelog/changelog-001-create-tables.yaml
+  - include:
+      file: db/changelog/changelog-002-categories-budgets.yaml
   - changeSet:
       id: 1
       author: travo

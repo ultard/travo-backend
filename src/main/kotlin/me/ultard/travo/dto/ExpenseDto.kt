@@ -11,7 +11,8 @@ data class ExpenseResponse(
     val amountCents: Long,
     val currencyCode: String,
     val description: String?,
-    val category: String?,
+    val categoryId: UUID,
+    val categoryCode: String?,
     val createdAt: Instant,
     val splits: List<ExpenseSplitResponse>,
 )
@@ -31,7 +32,7 @@ data class ExpenseCreateRequest(
     val amountCents: Long,
     val currencyCode: String,
     val description: String? = null,
-    val category: String? = null,
+    val categoryId: UUID,
     val splits: List<ExpenseSplitRequest>,
 )
 
@@ -44,6 +45,11 @@ data class ExpenseUpdateRequest(
     val amountCents: Long? = null,
     val currencyCode: String? = null,
     val description: String? = null,
-    val category: String? = null,
+    val categoryId: UUID? = null,
     val splits: List<ExpenseSplitRequest>? = null,
+)
+
+data class ExpensePageResponse(
+    val items: List<ExpenseResponse>,
+    val nextCursor: String?,
 )

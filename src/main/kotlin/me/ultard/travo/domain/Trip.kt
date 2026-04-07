@@ -17,7 +17,7 @@ import java.util.UUID
 class Trip(
     @Id
     @Column(updatable = false, nullable = false)
-    val id: UUID = UUID.randomUUID(),
+    var id: UUID = UUID.randomUUID(),
 
     @Column(nullable = false)
     var name: String,
@@ -36,17 +36,17 @@ class Trip(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_id", nullable = false, updatable = false)
-    val createdBy: User,
+    var createdBy: User,
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    val createdAt: Instant = Instant.now(),
+    var createdAt: Instant = Instant.now(),
 
     @OneToMany(mappedBy = "trip", orphanRemoval = true)
-    val participants: MutableList<TripParticipant> = mutableListOf(),
+    var participants: MutableList<TripParticipant> = mutableListOf(),
 
     @OneToMany(mappedBy = "trip", orphanRemoval = true)
-    val expenses: MutableList<Expense> = mutableListOf(),
+    var expenses: MutableList<Expense> = mutableListOf(),
 
     @OneToMany(mappedBy = "trip", orphanRemoval = true)
-    val routePoints: MutableList<TripRoute> = mutableListOf(),
+    var routePoints: MutableList<TripRoute> = mutableListOf(),
 )

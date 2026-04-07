@@ -1,0 +1,82 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-01-expense-categories
+      author: travo
+      comment: Expense categories (global) and FK from expense
+      changes:
+        - createTable:
+            tableName: expense_category
+            columns:
+              - column: { name: id, type: uuid }
+              - column: { name: code, type: varchar(64) }
+              - column: { name: created_at, type: timestamptz }
+        - addPrimaryKey:
+            tableName: expense_category
+            columnNames: id
+            constraintName: pk_expense_category
+        - addUniqueConstraint:
+            tableName: expense_category
+            columnNames: code
+            constraintName: uk_expense_category_code
+        - createIndex:
+            tableName: expense_category
+            indexName: idx_expense_category_code
+            columns:
+              - column: { name: code }
+
+        - addColumn:
+            tableName: expense
+            columns:
+              - column: { name: category_id, type: uuid }
+        - addForeignKeyConstraint:
+            baseTableName: expense
+            baseColumnNames: category_id
+            constraintName: fk_expense_category
+            referencedTableName: expense_category
+            referencedColumnNames: id
+        - createIndex:
+            tableName: expense
+            indexName: idx_expense_trip_created_id
+            columns:
+              - column: { name: trip_id }
+              - column: { name: created_at }
+              - column: { name: id }
+        - createIndex:
+            tableName: expense
+            indexName: idx_expense_trip_category
+            columns:
+              - column: { name: trip_id }
+              - column: { name: category_id }
+
+  - changeSet:
+      id: 002-02-trip-budgets
+      author: travo
+      comment: Budgets/limits per trip and optional category
+      changes:
+        - createTable:
+            tableName: trip_budget
+            columns:
+              - column: { name: id, type: uuid }
+              - column: { name: trip_id, type: uuid }
+              - column: { name: category, type: varchar(64) }
+              - column: { name: limit_cents, type: bigint }
+              - column: { name: created_at, type: timestamptz }
+        - addPrimaryKey:
+            tableName: trip_budget
+            columnNames: id
+            constraintName: pk_trip_budget
+        - addForeignKeyConstraint:
+            baseTableName: trip_budget
+            baseColumnNames: trip_id
+            constraintName: fk_trip_budget_trip
+            referencedTableName: trip
+            referencedColumnNames: id
+        - addUniqueConstraint:
+            tableName: trip_budget
+            columnNames: trip_id, category
+            constraintName: uk_trip_budget_trip_category
+        - createIndex:
+            tableName: trip_budget
+            indexName: idx_trip_budget_trip
+            columns:
+              - column: { name: trip_id }
