@@ -21,5 +21,10 @@ data class UserLoginRequest(
 
 data class JwtLoginResponse(
     val accessToken: String,
+    val refreshToken: String,
     val user: UserResponse,
+)
+
+data class JwtRefreshRequest(
+    val refreshToken: String,
 )

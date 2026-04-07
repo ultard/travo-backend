@@ -40,6 +40,7 @@ class SecurityConfig {
             authorizeHttpRequests {
                 authorize("/auth/register", permitAll)
                 authorize("/auth/login", permitAll)
+                authorize("/auth/refresh", permitAll)
                 authorize("/scalar", permitAll)
                 authorize("/scalar/**", permitAll)
                 authorize("/v3/api-docs", permitAll)
