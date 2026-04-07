@@ -26,6 +26,8 @@ repositories {
     mavenCentral()
 }
 
+val byteBuddyAgent by configurations.creating
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
@@ -47,6 +49,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testRuntimeOnly("com.h2database:h2")
+    byteBuddyAgent("net.bytebuddy:byte-buddy-agent:1.17.8")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation(kotlin("stdlib"))
 }
@@ -65,4 +69,5 @@ allOpen {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs("-javaagent:${byteBuddyAgent.singleFile.absolutePath}")
 }

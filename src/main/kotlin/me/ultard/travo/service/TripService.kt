@@ -75,7 +75,7 @@ class TripService(
     fun getParticipants(tripId: UUID): List<ParticipantResponse> {
         val participants = tripParticipantRepository.findAllByTripIdWithUser(tripId)
         return participants.map { participant ->
-            val user = participant.user!!
+            val user = participant.user ?: userService.getById(participant.userId)
             ParticipantResponse(
                 tripId = participant.tripId,
                 userId = participant.userId,
