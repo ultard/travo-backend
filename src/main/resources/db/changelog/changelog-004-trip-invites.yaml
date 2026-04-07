@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-01-trip-invites
+      author: travo
+      comment: Invites to trips by email
+      changes:
+        - createTable:
+            tableName: trip_invite
+            columns:
+              - column: { name: id, type: uuid }
+              - column: { name: trip_id, type: uuid }
+              - column: { name: email, type: varchar(255) }
+              - column: { name: role, type: varchar(32) }
+              - column: { name: status, type: varchar(32) }
+              - column: { name: created_by_id, type: uuid }
+              - column: { name: created_at, type: timestamptz }
+              - column: { name: expires_at, type: timestamptz }
+              - column: { name: responded_at, type: timestamptz }
+        - addPrimaryKey:
+            tableName: trip_invite
+            columnNames: id
+            constraintName: pk_trip_invite
+        - addForeignKeyConstraint:
+            baseTableName: trip_invite
+            baseColumnNames: trip_id
+            constraintName: fk_trip_invite_trip
+            referencedTableName: trip
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: trip_invite
+            baseColumnNames: created_by_id
+            constraintName: fk_trip_invite_created_by
+            referencedTableName: app_user
+            referencedColumnNames: id
+        - createIndex:
+            tableName: trip_invite
+            indexName: idx_trip_invite_trip
+            columns:
+              - column: { name: trip_id }
+        - createIndex:
+            tableName: trip_invite
+            indexName: idx_trip_invite_email_status
+            columns:
+              - column: { name: email }
+              - column: { name: status }

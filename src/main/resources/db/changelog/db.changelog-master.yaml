@@ -5,6 +5,8 @@ databaseChangeLog:
       file: db/changelog/changelog-002-categories-budgets.yaml
   - include:
       file: db/changelog/changelog-003-refresh-tokens.yaml
+  - include:
+      file: db/changelog/changelog-004-trip-invites.yaml
   - changeSet:
       id: 1
       author: travo
