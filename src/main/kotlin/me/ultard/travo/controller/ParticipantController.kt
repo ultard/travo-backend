@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import me.ultard.travo.dto.ParticipantAddRequest
+import me.ultard.travo.dto.ParticipantRoleUpdateRequest
 import me.ultard.travo.dto.ParticipantResponse
 import me.ultard.travo.security.requireCurrentUserId
 import me.ultard.travo.service.TripService
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -61,5 +63,34 @@ class ParticipantController(
         val currentUserId = requireCurrentUserId()
         tripService.removeParticipant(tripId, userId, currentUserId)
         return ResponseEntity.noContent().build()
+    }
+
+    @Operation(summary = "Выйти из поездки", description = "Текущий участник выходит из поездки сам. Владелец выйти не может.")
+    @ApiResponses(
+        ApiResponse(responseCode = "204", description = "Выход выполнен"),
+        ApiResponse(responseCode = "400", description = "Владелец не может выйти"),
+        ApiResponse(responseCode = "404", description = "Участник не найден"),
+    )
+    @PostMapping("/leave")
+    fun leave(@PathVariable tripId: UUID): ResponseEntity<Unit> {
+        val currentUserId = requireCurrentUserId()
+        tripService.leaveTrip(tripId, currentUserId)
+        return ResponseEntity.noContent().build()
+    }
+
+    @Operation(summary = "Сменить роль участника", description = "Меняет роль участника. Только владелец поездки.")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Роль обновлена"),
+        ApiResponse(responseCode = "403", description = "Только владелец"),
+        ApiResponse(responseCode = "404", description = "Участник не найден"),
+    )
+    @PatchMapping("/{userId}/role")
+    fun updateRole(
+        @PathVariable tripId: UUID,
+        @PathVariable userId: UUID,
+        @RequestBody request: ParticipantRoleUpdateRequest,
+    ): ParticipantResponse {
+        val currentUserId = requireCurrentUserId()
+        return tripService.updateParticipantRole(tripId, userId, request.role, currentUserId)
     }
 }

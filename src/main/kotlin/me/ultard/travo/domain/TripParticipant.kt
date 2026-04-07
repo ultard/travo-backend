@@ -25,26 +25,26 @@ enum class ParticipantRole {
 class TripParticipant(
     @Id
     @Column(name = "trip_id", updatable = false, nullable = false)
-    val tripId: UUID,
+    var tripId: UUID,
 
     @Id
     @Column(name = "user_id", updatable = false, nullable = false)
-    val userId: UUID,
+    var userId: UUID,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     var role: ParticipantRole = ParticipantRole.MEMBER,
 
     @Column(name = "joined_at", nullable = false, updatable = false)
-    val joinedAt: Instant = Instant.now(),
+    var joinedAt: Instant = Instant.now(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trip_id", insertable = false, updatable = false)
-    val trip: Trip? = null,
+    var trip: Trip? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    val user: User? = null,
+    var user: User? = null,
 )
 
 data class TripParticipantId(

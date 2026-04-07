@@ -17,3 +17,7 @@ data class ParticipantAddRequest(
     val userId: UUID,
     val role: ParticipantRole = ParticipantRole.MEMBER,
 )
+
+data class ParticipantRoleUpdateRequest(
+    val role: ParticipantRole,
+)

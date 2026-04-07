@@ -16,10 +16,10 @@ import java.util.UUID
 class TripRoute(
     @Id
     @Column(updatable = false, nullable = false)
-    val id: UUID = UUID.randomUUID(),
+    var id: UUID = UUID.randomUUID(),
 
     @Column(name = "trip_id", nullable = false, updatable = false)
-    val tripId: UUID,
+    var tripId: UUID,
 
     @Column(nullable = false)
     var position: Int,
@@ -47,5 +47,5 @@ class TripRoute(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trip_id", insertable = false, updatable = false)
-    val trip: Trip? = null,
+    var trip: Trip? = null,
 )

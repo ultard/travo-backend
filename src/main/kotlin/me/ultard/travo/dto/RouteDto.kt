@@ -38,3 +38,7 @@ data class RoutePointUpdateRequest(
     val plannedStartDate: LocalDate? = null,
     val plannedEndDate: LocalDate? = null,
 )
+
+data class RouteReorderRequest(
+    val orderedRouteIds: List<UUID>,
+)

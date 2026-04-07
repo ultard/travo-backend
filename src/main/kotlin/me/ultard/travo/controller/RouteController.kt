@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import me.ultard.travo.dto.RoutePointCreateRequest
 import me.ultard.travo.dto.RoutePointResponse
 import me.ultard.travo.dto.RoutePointUpdateRequest
+import me.ultard.travo.dto.RouteReorderRequest
 import me.ultard.travo.security.requireCurrentUserId
 import me.ultard.travo.service.RouteService
 import org.springframework.http.HttpStatus
@@ -36,6 +37,17 @@ class RouteController(
         return routeService.list(tripId, userId)
     }
 
+    @Operation(summary = "Получить пункт маршрута", description = "Одна точка маршрута по id.")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Пункт найден"),
+        ApiResponse(responseCode = "404", description = "Пункт не найден"),
+    )
+    @GetMapping("/{routeId}")
+    fun get(@PathVariable tripId: UUID, @PathVariable routeId: UUID): RoutePointResponse {
+        val userId = requireCurrentUserId()
+        return routeService.get(tripId, routeId, userId)
+    }
+
     @Operation(summary = "Добавить пункт маршрута")
     @ApiResponses(
         ApiResponse(responseCode = "201", description = "Пункт добавлен"),
@@ -49,6 +61,18 @@ class RouteController(
         val userId = requireCurrentUserId()
         val route = routeService.create(tripId, request, userId)
         return ResponseEntity.status(HttpStatus.CREATED).body(route)
+    }
+
+    @Operation(summary = "Переупорядочивание", description = "Присваивает position по списку orderedRouteIds (1..N).")
+    @ApiResponses(
+        ApiResponse(responseCode = "204", description = "Порядок обновлён"),
+        ApiResponse(responseCode = "400", description = "Некорректный список id"),
+    )
+    @PutMapping("/reorder")
+    fun reorder(@PathVariable tripId: UUID, @RequestBody request: RouteReorderRequest): ResponseEntity<Unit> {
+        val userId = requireCurrentUserId()
+        routeService.reorder(tripId, request.orderedRouteIds, userId)
+        return ResponseEntity.noContent().build()
     }
 
     @Operation(summary = "Изменить пункт маршрута")

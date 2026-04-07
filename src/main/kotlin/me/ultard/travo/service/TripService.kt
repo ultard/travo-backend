@@ -122,9 +122,41 @@ class TripService(
         tripParticipantRepository.deleteByTripIdAndUserId(tripId, userId)
     }
 
+    fun leaveTrip(tripId: UUID, currentUserId: UUID) {
+        val current = tripParticipantRepository.findByTripIdAndUserId(tripId, currentUserId)
+            ?: throw NoSuchElementException("Not a participant of trip $tripId")
+        require(current.role != ParticipantRole.OWNER) { "Owner cannot leave trip" }
+        tripParticipantRepository.deleteByTripIdAndUserId(tripId, currentUserId)
+    }
+
+    fun updateParticipantRole(tripId: UUID, targetUserId: UUID, role: ParticipantRole, currentUserId: UUID): ParticipantResponse {
+        require(role != ParticipantRole.OWNER) { "Cannot assign OWNER role" }
+        require(targetUserId != currentUserId) { "Cannot change your own role" }
+
+        ensureOwner(tripId, currentUserId)
+
+        val target = tripParticipantRepository.findByTripIdAndUserId(tripId, targetUserId)
+            ?: throw NoSuchElementException("Participant not found in trip")
+
+        require(target.role != ParticipantRole.OWNER) { "Cannot change OWNER role" }
+        require(role == ParticipantRole.ADMIN || role == ParticipantRole.MEMBER) { "Unsupported role change" }
+
+        target.role = role
+        val saved = tripParticipantRepository.save(target)
+        val user = userService.getById(saved.userId)
+        return ParticipantResponse(
+            tripId = saved.tripId,
+            userId = saved.userId,
+            displayName = user.displayName,
+            email = user.email,
+            role = saved.role,
+            joinedAt = saved.joinedAt,
+        )
+    }
+
     private fun ensureCanRemoveParticipant(tripId: UUID, currentUserId: UUID, targetUserId: UUID) {
         if (currentUserId == targetUserId) {
-            require(false) { "Cannot remove yourself; leave trip is not supported" }
+            require(false) { "Cannot remove yourself via this endpoint; use leave instead" }
         }
         val current = tripParticipantRepository.findByTripIdAndUserId(tripId, currentUserId)
             ?: throw NoSuchElementException("Not a participant of trip $tripId")
